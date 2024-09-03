@@ -7,16 +7,19 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import { showNotification } from "./reducers/notificationReducer";
 import { showError } from "./reducers/errorReducer";
+import { createBlog, setBlogs } from "./reducers/blogReducer";
 import { useDispatch, useSelector } from "react-redux";
+import { store } from "./store";
 
 const App = () => {
   const dispatch = useDispatch();
-  const [blogs, setBlogs] = useState([]);
+  // const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
   const notification = useSelector((state) => state.notification);
   const errorMessage = useSelector((state) => state.error);
+  const blogs = useSelector((state) => state.blog);
 
   const blogFormRef = useRef();
 
@@ -26,8 +29,7 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then((blogs) => {
-      const sortedBlogs = [...blogs].sort(compareLikes);
-      setBlogs(sortedBlogs);
+      store.dispatch(setBlogs(blogs));
     });
   }, []);
 
@@ -66,7 +68,7 @@ const App = () => {
       dispatch(
         showNotification(`${blogObject.title} by ${blogObject.author} added`)
       );
-      setBlogs(blogs.concat(response));
+      dispatch(createBlog(response));
     } catch (exception) {
       dispatch(
         showError(
