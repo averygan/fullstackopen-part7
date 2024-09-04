@@ -3,8 +3,9 @@ import blogService from "../services/blogs";
 import { useDispatch } from "react-redux";
 import { showNotification } from "../reducers/notificationReducer";
 import { showError } from "../reducers/errorReducer";
+import { deleteBlog } from "../reducers/blogReducer";
 
-const Blog = ({ blog, blogState, setBlogs, addLike, loggedInUser }) => {
+const Blog = ({ blog, addLike, loggedInUser }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -18,7 +19,7 @@ const Blog = ({ blog, blogState, setBlogs, addLike, loggedInUser }) => {
   const hideWhenVisible = { display: visible ? "none" : "" };
   const showWhenVisible = { display: visible ? "" : "none" };
 
-  const deleteBlog = async (blogObject) => {
+  const handleDeleteBlog = async (blogObject) => {
     if (!loggedInUser.username) {
       return alert("Login required to delete blogs");
     }
@@ -27,17 +28,17 @@ const Blog = ({ blog, blogState, setBlogs, addLike, loggedInUser }) => {
         const response = await blogService.deleteBlog(blogObject.id);
         // successful deletion returns no response body
         if (!response) {
-          setBlogs(blogState.filter((blog) => blog.id !== blogObject.id));
+          dispatch(deleteBlog(blogObject.id));
           dispatch(
             showNotification(`"${blogObject.title}" deleted successfully`)
           );
         } else {
-          useDispatch(showError(`failed to delete "${blogObject.title}"`));
+          dispatch(showError(`failed to delete "${blogObject.title}"`));
         }
       }
       return;
     }
-    useDispatch(showError(`not authorized to delete "${blogObject.title}"`));
+    dispatch(showError(`not authorized to delete "${blogObject.title}"`));
   };
 
   const toggleVisibility = () => {
@@ -65,7 +66,7 @@ const Blog = ({ blog, blogState, setBlogs, addLike, loggedInUser }) => {
         <div>User: {blog.user.name}</div>
         <div>
           {blog.user.username === loggedInUser?.username && (
-            <button onClick={() => deleteBlog(blog)}>delete</button>
+            <button onClick={() => handleDeleteBlog(blog)}>delete</button>
           )}
         </div>
       </div>

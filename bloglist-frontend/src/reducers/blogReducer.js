@@ -13,9 +13,21 @@ const blogSlice = createSlice({
     setBlogs(state, action) {
       return action.payload;
     },
+    likeBlog(state, action) {
+      const id = action.payload;
+      const blogToLike = state.find((blog) => blog.id === id);
+      if (blogToLike) {
+        blogToLike.likes += 1;
+      }
+      state.sort((a, b) => b.likes - a.likes);
+    },
+    deleteBlog(state, action) {
+      return state.filter((blog) => blog.id !== action.payload);
+    },
   },
 });
 
-export const { createBlog, appendBlog, setBlogs } = blogSlice.actions;
+export const { createBlog, appendBlog, setBlogs, likeBlog, deleteBlog } =
+  blogSlice.actions;
 
 export default blogSlice.reducer;

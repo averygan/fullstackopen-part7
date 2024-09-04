@@ -7,13 +7,12 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import { showNotification } from "./reducers/notificationReducer";
 import { showError } from "./reducers/errorReducer";
-import { createBlog, setBlogs } from "./reducers/blogReducer";
+import { createBlog, setBlogs, likeBlog } from "./reducers/blogReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { store } from "./store";
 
 const App = () => {
   const dispatch = useDispatch();
-  // const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
@@ -22,10 +21,6 @@ const App = () => {
   const blogs = useSelector((state) => state.blog);
 
   const blogFormRef = useRef();
-
-  const compareLikes = (a, b) => {
-    return b.likes - a.likes;
-  };
 
   useEffect(() => {
     blogService.getAll().then((blogs) => {
@@ -112,29 +107,13 @@ const App = () => {
     </Togglable>
   );
 
-  const handleLike = async (id) => {
-    try {
-      const allBlogs = await blogService.getAll();
-      const updatedBlog = allBlogs.find((blog) => blog.id === id);
-      if (updatedBlog) {
-        const updatedBlogs = blogs.map((blog) =>
-          blog.id === id ? updatedBlog : blog
-        );
-        const sortedBlogs = [...updatedBlogs].sort(compareLikes);
-        setBlogs(sortedBlogs);
-      }
-    } catch (error) {
-      console.log("error updating likes");
-    }
-  };
-
   const addLike = async (blogObject) => {
     try {
       // destructure id and user from blogobject, add the rest to updatedBlog
       const { id, user, ...updatedBlog } = blogObject;
       updatedBlog.likes = updatedBlog.likes + 1;
       const response = await blogService.like(id, updatedBlog);
-      handleLike(id);
+      dispatch(likeBlog(id));
       dispatch(showNotification(`like added to "${blogObject.title}"`));
     } catch (exception) {
       dispatch(
@@ -155,14 +134,7 @@ const App = () => {
       {user !== null && blogForm()}
 
       {blogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          blogState={blogs}
-          setBlogs={setBlogs}
-          addLike={addLike}
-          loggedInUser={user}
-        />
+        <Blog key={blog.id} blog={blog} addLike={addLike} loggedInUser={user} />
       ))}
     </div>
   );
