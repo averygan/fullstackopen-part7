@@ -1,24 +1,22 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import LoginForm from "./components/LoginForm";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
 import blogService from "./services/blogs";
-import loginService from "./services/login";
 import { showNotification } from "./reducers/notificationReducer";
 import { showError } from "./reducers/errorReducer";
 import { createBlog, setBlogs, likeBlog } from "./reducers/blogReducer";
+import { setUser, logoutUser } from "./reducers/userReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { store } from "./store";
 
 const App = () => {
   const dispatch = useDispatch();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
   const notification = useSelector((state) => state.notification);
   const errorMessage = useSelector((state) => state.error);
   const blogs = useSelector((state) => state.blog);
+  const userData = useSelector((state) => state.user);
 
   const blogFormRef = useRef();
 
@@ -32,29 +30,10 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem("loggedUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      setUser(user);
+      dispatch(setUser(user));
       blogService.setToken(user.token);
     }
   }, []);
-
-  const handleLogin = async (event) => {
-    event.preventDefault();
-
-    try {
-      const user = await loginService.login({
-        username,
-        password,
-      });
-      window.localStorage.setItem("loggedUser", JSON.stringify(user));
-      blogService.setUsername(user.username);
-      blogService.setToken(user.token);
-      setUser(user);
-      setUsername("");
-      setPassword("");
-    } catch (exception) {
-      dispatch(showError("wrong username or password"));
-    }
-  };
 
   const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility();
@@ -76,14 +55,14 @@ const App = () => {
   const handleLogout = (event) => {
     event.preventDefault();
     window.localStorage.removeItem("loggedUser");
-    setUser(null);
+    dispatch(logoutUser());
     blogService.setToken(null);
   };
 
   const userInfo = () => (
     <div>
       <p>
-        {user.name} logged in
+        {userData.loggedInUser.name} logged in
         <button onClick={handleLogout}>logout</button>
       </p>
     </div>
@@ -91,13 +70,7 @@ const App = () => {
 
   const loginForm = () => (
     <Togglable buttonLabel="login">
-      <LoginForm
-        username={username}
-        password={password}
-        handleUsernameChange={({ target }) => setUsername(target.value)}
-        handlePasswordChange={({ target }) => setPassword(target.value)}
-        handleSubmit={handleLogin}
-      />
+      <LoginForm />
     </Togglable>
   );
 
@@ -107,34 +80,17 @@ const App = () => {
     </Togglable>
   );
 
-  const addLike = async (blogObject) => {
-    try {
-      // destructure id and user from blogobject, add the rest to updatedBlog
-      const { id, user, ...updatedBlog } = blogObject;
-      updatedBlog.likes = updatedBlog.likes + 1;
-      const response = await blogService.like(id, updatedBlog);
-      dispatch(likeBlog(id));
-      dispatch(showNotification(`like added to "${blogObject.title}"`));
-    } catch (exception) {
-      dispatch(
-        showNotification(
-          `Failed to add like to "${blogObject.title}". Please try again.`
-        )
-      );
-    }
-  };
-
   return (
     <div>
       <h1>blogs</h1>
       {notification && <div className="notification">{notification}</div>}
       {errorMessage && <div className="error">{errorMessage}</div>}
-      {user === null && loginForm()}
-      {user !== null && userInfo()}
-      {user !== null && blogForm()}
+      {userData.loggedInUser === null && loginForm()}
+      {userData.loggedInUser !== null && userInfo()}
+      {userData.loggedInUser !== null && blogForm()}
 
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} addLike={addLike} loggedInUser={user} />
+        <Blog key={blog.id} blog={blog} loggedInUser={userData.loggedInUser} />
       ))}
     </div>
   );

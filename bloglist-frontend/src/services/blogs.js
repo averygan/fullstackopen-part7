@@ -2,13 +2,9 @@ import axios from "axios";
 const baseUrl = "/api/blogs";
 
 let token = null;
-let username = null;
 
 const setToken = (newToken) => {
   token = `Bearer ${newToken}`;
-};
-const setUsername = (newUsername) => {
-  username = newUsername;
 };
 
 const getAll = () => {
@@ -37,4 +33,4 @@ const deleteBlog = async (id) => {
   return response.data;
 };
 
-export default { getAll, create, setToken, setUsername, like, deleteBlog };
+export default { getAll, create, setToken, like, deleteBlog };
