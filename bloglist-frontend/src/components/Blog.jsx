@@ -2,8 +2,7 @@ import { useState } from "react";
 import blogService from "../services/blogs";
 import { useDispatch, useSelector } from "react-redux";
 import { showNotification } from "../reducers/notificationReducer";
-import { showError } from "../reducers/errorReducer";
-import { deleteBlog } from "../reducers/blogReducer";
+import { handleDeleteBlog } from "../reducers/blogReducer";
 
 const Blog = ({ blog }) => {
   const blogStyle = {
@@ -37,30 +36,12 @@ const Blog = ({ blog }) => {
     }
   };
 
-  const handleDeleteBlog = async (blogObject) => {
-    if (!userData.loggedInUser) {
-      return alert("Login required to delete blogs");
-    }
-    if (blogObject.user.username === userData.loggedInUser.username) {
-      if (confirm(`Remove ${blogObject.title}?`)) {
-        const response = await blogService.deleteBlog(blogObject.id);
-        // successful deletion returns no response body
-        if (!response) {
-          dispatch(deleteBlog(blogObject.id));
-          dispatch(
-            showNotification(`"${blogObject.title}" deleted successfully`)
-          );
-        } else {
-          dispatch(showError(`failed to delete "${blogObject.title}"`));
-        }
-      }
-      return;
-    }
-    dispatch(showError(`not authorized to delete "${blogObject.title}"`));
-  };
-
   const toggleVisibility = () => {
     setVisible(!visible);
+  };
+
+  const onDeleteClick = () => {
+    dispatch(handleDeleteBlog(blog, userData.loggedInUser));
   };
 
   return (
@@ -84,7 +65,7 @@ const Blog = ({ blog }) => {
         <div>User: {blog.user.name}</div>
         <div>
           {blog.user.username === userData.loggedInUser?.username && (
-            <button onClick={() => handleDeleteBlog(blog)}>delete</button>
+            <button onClick={() => onDeleteClick()}>delete</button>
           )}
         </div>
       </div>

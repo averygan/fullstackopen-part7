@@ -5,8 +5,9 @@ import { showNotification } from "../reducers/notificationReducer";
 import { showError } from "../reducers/errorReducer";
 import blogService from "../services/blogs";
 import { createBlog } from "../reducers/blogReducer";
+import { updateByUserId } from "../reducers/usersReducer";
 
-const BlogForm = () => {
+const BlogForm = ({ loggedInUser }) => {
   const dispatch = useDispatch();
 
   const [newBlog, setNewBlog] = useState({
@@ -30,6 +31,7 @@ const BlogForm = () => {
         showNotification(`${blogObject.title} by ${blogObject.author} added`)
       );
       dispatch(createBlog(response));
+      dispatch(updateByUserId(loggedInUser.id));
     } catch (exception) {
       console.log(exception);
       dispatch(
