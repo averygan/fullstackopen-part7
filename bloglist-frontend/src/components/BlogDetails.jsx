@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { handleDeleteBlog, likeBlog } from "../reducers/blogReducer";
 import { showNotification } from "../reducers/notificationReducer";
 import blogService from "../services/blogs";
+import CommentForm from "./CommentForm";
 
 const BlogDetails = () => {
   const dispatch = useDispatch();
@@ -50,6 +51,19 @@ const BlogDetails = () => {
           <button onClick={() => onDeleteClick()}>delete</button>
         )}
       </div>
+      <h2>Comments</h2>
+      <CommentForm blogId={blog.id} />
+      {blog.comments.length > 0 ? (
+        <>
+          <ul>
+            {blog.comments.map((comment, index) => (
+              <li key={index}>{comment}</li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        <>No comments yet... add one?</>
+      )}
     </div>
   );
 };

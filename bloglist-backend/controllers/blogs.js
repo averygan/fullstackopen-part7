@@ -57,6 +57,26 @@ blogRouter.delete('/:id', middleware.userExtractor, async (request, response) =>
   }
 })
 
+blogRouter.post('/:id/comments', async (request, response) => {
+  const { comment } = request.body
+  const id = request.params.id
+
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return response.status(400).end()
+
+  const result = await Blog.findByIdAndUpdate(
+    id, 
+    { $push: { comments: comment } },
+    { new: true }
+  )
+
+  if (result) {
+    response.json(result)
+  } else {
+    response.status(404).end()
+  }
+})
+
 blogRouter.put('/:id', async (request, response) => {
   const new_blog = request.body
   const id = request.params.id

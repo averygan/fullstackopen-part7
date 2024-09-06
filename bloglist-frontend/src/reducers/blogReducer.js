@@ -25,14 +25,27 @@ const blogSlice = createSlice({
       }
       state.sort((a, b) => b.likes - a.likes);
     },
+    commentBlog(state, action) {
+      const { id, comment } = action.payload;
+      const blogToUpdate = state.find((blog) => blog.id === id);
+      if (blogToUpdate) {
+        blogToUpdate.comments.push(comment);
+      }
+    },
     deleteBlog(state, action) {
       return state.filter((blog) => blog.id !== action.payload);
     },
   },
 });
 
-export const { createBlog, appendBlog, setBlogs, likeBlog, deleteBlog } =
-  blogSlice.actions;
+export const {
+  createBlog,
+  appendBlog,
+  setBlogs,
+  likeBlog,
+  commentBlog,
+  deleteBlog,
+} = blogSlice.actions;
 
 export const getAllBlogs = () => {
   return async (dispatch) => {
