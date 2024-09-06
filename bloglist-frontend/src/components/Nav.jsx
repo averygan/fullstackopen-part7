@@ -1,17 +1,19 @@
 import { logoutUser } from "../reducers/userReducer";
 import { useSelector, useDispatch } from "react-redux";
 import blogService from "../services/blogs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Nav = () => {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLogout = (event) => {
     event.preventDefault();
     window.localStorage.removeItem("loggedUser");
     dispatch(logoutUser());
     blogService.setToken(null);
+    navigate("/");
   };
 
   return (
