@@ -1,15 +1,36 @@
-import { setUser } from "../reducers/userReducer";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
-import { showError } from "../reducers/errorReducer";
+
+import Togglable from "./Togglable";
 import loginService from "../services/login";
 import blogService from "../services/blogs";
-import Togglable from "./Togglable";
+import { showError } from "../reducers/errorReducer";
+import { setUser } from "../reducers/userReducer";
+import { logoutUser } from "../reducers/userReducer";
 
 const LoginForm = () => {
+  const user = useSelector((state) => state.user);
   const [username, setUsernameLocal] = useState("");
   const [password, setPasswordLocal] = useState("");
   const dispatch = useDispatch();
+
+  const handleLogout = (event) => {
+    event.preventDefault();
+    window.localStorage.removeItem("loggedUser");
+    dispatch(logoutUser());
+    blogService.setToken(null);
+  };
+
+  if (user.loggedInUser) {
+    return (
+      <div>
+        <p>
+          {user.loggedInUser.name} logged in
+          <button onClick={handleLogout}>logout</button>
+        </p>
+      </div>
+    );
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -22,6 +43,8 @@ const LoginForm = () => {
       window.localStorage.setItem("loggedUser", JSON.stringify(user));
       blogService.setToken(user.token);
       dispatch(setUser(user));
+      setUsernameLocal("");
+      setPasswordLocal("");
     } catch (exception) {
       dispatch(showError("wrong username or password"));
     }

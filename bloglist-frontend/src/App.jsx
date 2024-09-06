@@ -1,22 +1,19 @@
 import { useEffect } from "react";
-import Blog from "./components/Blog";
 import LoginForm from "./components/LoginForm";
-import BlogForm from "./components/BlogForm";
 import blogService from "./services/blogs";
 import Users from "./components/Users";
 import UserDetails from "./components/UserDetails";
+import BlogDetails from "./components/BlogDetails";
+import Notification from "./components/Notification";
+import Bloglist from "./components/Bloglist";
 import { getAllBlogs } from "./reducers/blogReducer";
-import { setUser, logoutUser } from "./reducers/userReducer";
+import { setUser } from "./reducers/userReducer";
 import { getAllUsers } from "./reducers/usersReducer";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 const App = () => {
   const dispatch = useDispatch();
-  const notification = useSelector((state) => state.notification);
-  const errorMessage = useSelector((state) => state.error);
-  const blogs = useSelector((state) => state.blog);
-  const userData = useSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(getAllBlogs());
@@ -32,46 +29,25 @@ const App = () => {
     }
   }, []);
 
-  const handleLogout = (event) => {
-    event.preventDefault();
-    window.localStorage.removeItem("loggedUser");
-    dispatch(logoutUser());
-    blogService.setToken(null);
-  };
-
-  const userInfo = () => (
-    <div>
-      <p>
-        {userData.loggedInUser.name} logged in
-        <button onClick={handleLogout}>logout</button>
-      </p>
-    </div>
-  );
-
   return (
-    <Router>
-      <div>
-        <h1>blogs</h1>
-        {notification && <div className="notification">{notification}</div>}
-        {errorMessage && <div className="error">{errorMessage}</div>}
-        {userData.loggedInUser === null && <LoginForm />}
-        {userData.loggedInUser !== null && userInfo()}
-        {userData.loggedInUser !== null && (
-          <BlogForm loggedInUser={userData.loggedInUser} />
-        )}
-
-        {blogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            loggedInUser={userData.loggedInUser}
-          />
-        ))}
-
-        <Users />
-        <UserDetails />
-      </div>
-    </Router>
+    <>
+      <Notification />
+      <Router>
+        <div>
+          <Link to="/">Home</Link>
+          <Link to="/api/blogs">Blogs</Link>
+          <Link to="/api/users">Users</Link>
+        </div>
+        <LoginForm />
+        <Routes>
+          <Route path="/" element={<Bloglist />} />
+          <Route path="/api/blogs" element={<Bloglist />} />
+          <Route path="/api/users" element={<Users />} />
+          <Route path="/api/users/:id" element={<UserDetails />} />
+          <Route path="/api/blogs/:id" element={<BlogDetails />} />
+        </Routes>
+      </Router>
+    </>
   );
 };
 

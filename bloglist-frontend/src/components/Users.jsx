@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Users = () => {
   const users = useSelector((state) => state.users);
@@ -18,7 +18,7 @@ const Users = () => {
           {users.map((user) => (
             <tr key={user.id}>
               <td>
-                <Link to={`api/users/${user.id}`}>{user.name}</Link>
+                <Link to={`${user.id}`}>{user.name}</Link>
               </td>
               <td>{user.blogs.length}</td>
             </tr>
