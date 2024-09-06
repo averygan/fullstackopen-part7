@@ -6,14 +6,17 @@ import UserDetails from "./components/UserDetails";
 import BlogDetails from "./components/BlogDetails";
 import Notification from "./components/Notification";
 import Bloglist from "./components/Bloglist";
+import Nav from "./components/Nav";
 import { getAllBlogs } from "./reducers/blogReducer";
 import { setUser } from "./reducers/userReducer";
 import { getAllUsers } from "./reducers/usersReducer";
-import { useDispatch } from "react-redux";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+
+import { useSelector, useDispatch } from "react-redux";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 const App = () => {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(getAllBlogs());
@@ -33,18 +36,18 @@ const App = () => {
     <>
       <Notification />
       <Router>
-        <div>
-          <Link to="/">Home</Link>
-          <Link to="/api/blogs">Blogs</Link>
-          <Link to="/api/users">Users</Link>
-        </div>
+        <Nav />
         <LoginForm />
         <Routes>
-          <Route path="/" element={<Bloglist />} />
-          <Route path="/api/blogs" element={<Bloglist />} />
-          <Route path="/api/users" element={<Users />} />
-          <Route path="/api/users/:id" element={<UserDetails />} />
-          <Route path="/api/blogs/:id" element={<BlogDetails />} />
+          {user.loggedInUser && (
+            <>
+              <Route path="/" element={<Bloglist />} />
+              <Route path="/api/blogs" element={<Bloglist />} />
+              <Route path="/api/users" element={<Users />} />
+              <Route path="/api/users/:id" element={<UserDetails />} />
+              <Route path="/api/blogs/:id" element={<BlogDetails />} />
+            </>
+          )}
         </Routes>
       </Router>
     </>

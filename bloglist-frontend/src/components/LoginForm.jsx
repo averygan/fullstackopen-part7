@@ -6,7 +6,6 @@ import loginService from "../services/login";
 import blogService from "../services/blogs";
 import { showError } from "../reducers/errorReducer";
 import { setUser } from "../reducers/userReducer";
-import { logoutUser } from "../reducers/userReducer";
 
 const LoginForm = () => {
   const user = useSelector((state) => state.user);
@@ -14,22 +13,8 @@ const LoginForm = () => {
   const [password, setPasswordLocal] = useState("");
   const dispatch = useDispatch();
 
-  const handleLogout = (event) => {
-    event.preventDefault();
-    window.localStorage.removeItem("loggedUser");
-    dispatch(logoutUser());
-    blogService.setToken(null);
-  };
-
   if (user.loggedInUser) {
-    return (
-      <div>
-        <p>
-          {user.loggedInUser.name} logged in
-          <button onClick={handleLogout}>logout</button>
-        </p>
-      </div>
-    );
+    return null;
   }
 
   const handleLogin = async (event) => {

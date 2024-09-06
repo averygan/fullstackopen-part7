@@ -1,6 +1,3 @@
-import blogService from "../services/blogs";
-import { useDispatch } from "react-redux";
-import { showNotification } from "../reducers/notificationReducer";
 import { Link } from "react-router-dom";
 
 const Blog = ({ blog }) => {

@@ -15,7 +15,6 @@ const Bloglist = () => {
     marginBottom: 5,
   };
 
-  if (!users.loggedInUser) return;
   return (
     <>
       <BlogForm loggedInUser={users.loggedInUser} />
