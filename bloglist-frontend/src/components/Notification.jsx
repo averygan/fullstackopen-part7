@@ -1,14 +1,24 @@
 import { useSelector } from "react-redux";
 
+import Alert from "react-bootstrap/Alert";
+
 const Notification = () => {
   const notification = useSelector((state) => state.notification);
   const errorMessage = useSelector((state) => state.error);
 
   return (
-    <>
-      {notification && <div className="notification">{notification}</div>}
-      {errorMessage && <div className="error">{errorMessage}</div>}
-    </>
+    <div className="container mt-3">
+      {notification && (
+        <Alert variant="success" className="mb-3">
+          {notification}
+        </Alert>
+      )}
+      {errorMessage && (
+        <Alert variant="danger" className="mb-3">
+          {errorMessage}
+        </Alert>
+      )}
+    </div>
   );
 };
 

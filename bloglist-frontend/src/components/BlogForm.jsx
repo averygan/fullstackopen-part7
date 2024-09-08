@@ -7,6 +7,11 @@ import blogService from "../services/blogs";
 import { createBlog } from "../reducers/blogReducer";
 import { updateByUserId } from "../reducers/usersReducer";
 
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+
 const BlogForm = ({ loggedInUser }) => {
   const dispatch = useDispatch();
 
@@ -54,45 +59,49 @@ const BlogForm = ({ loggedInUser }) => {
   };
 
   return (
-    <div>
-      <Togglable buttonLabel="create new" ref={blogFormRef}>
-        <form onSubmit={callCreateBlog}>
-          <div>
-            title:
-            <input
-              type="text"
-              data-testid="title"
-              value={newBlog.title}
-              name="title"
-              onChange={handleBlogChange}
-              placeholder="title"
-            />
-          </div>
-          <div>
-            author:
-            <input
-              type="text"
-              data-testid="author"
-              value={newBlog.author}
-              name="author"
-              onChange={handleBlogChange}
-              placeholder="author"
-            />
-          </div>
-          <div>
-            url:
-            <input
-              type="text"
-              data-testid="url"
-              value={newBlog.url}
-              name="url"
-              onChange={handleBlogChange}
-              placeholder="url"
-            />
-          </div>
-          <button type="submit">create</button>
-        </form>
-      </Togglable>
+    <div className="p-3 bg-light rounded shadow-sm">
+      <Row className="justify-content-center">
+        <Col xs={12} md={8} lg={6}>
+          <h1>Add new blog:</h1>
+
+          <Togglable
+            buttonLabel="create new"
+            onSubmit={callCreateBlog}
+            ref={blogFormRef}
+          >
+            <Form.Group className="mb-1">
+              <Form.Control
+                type="text"
+                data-testid="title"
+                value={newBlog.title}
+                name="title"
+                onChange={handleBlogChange}
+                placeholder="title"
+              />
+            </Form.Group>
+            <Form.Group className="mb-1">
+              <Form.Control
+                type="text"
+                data-testid="author"
+                value={newBlog.author}
+                name="author"
+                onChange={handleBlogChange}
+                placeholder="author"
+              />
+            </Form.Group>
+            <Form.Group className="mb-1">
+              <Form.Control
+                type="text"
+                data-testid="url"
+                value={newBlog.url}
+                name="url"
+                onChange={handleBlogChange}
+                placeholder="url"
+              />
+            </Form.Group>
+          </Togglable>
+        </Col>
+      </Row>
     </div>
   );
 };

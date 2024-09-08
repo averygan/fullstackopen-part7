@@ -7,7 +7,7 @@ import UserDetails from "./components/UserDetails";
 import BlogDetails from "./components/BlogDetails";
 import Notification from "./components/Notification";
 import Bloglist from "./components/Bloglist";
-import Nav from "./components/Nav";
+import Navigation from "./components/Nav";
 
 import { getAllBlogs } from "./reducers/blogReducer";
 import { setUser } from "./reducers/userReducer";
@@ -37,6 +37,7 @@ const App = () => {
   if (!user.loggedInUser) {
     return (
       <>
+        <Notification />
         <Routes>
           <Route path="/" element={<LoginForm />} />
         </Routes>
@@ -45,9 +46,9 @@ const App = () => {
   }
 
   return (
-    <>
+    <div className="container">
       <Notification />
-      <Nav />
+      <Navigation />
       <Routes>
         <Route path="/" element={<Bloglist />} />
         <Route path="/api/blogs" element={<Bloglist />} />
@@ -55,7 +56,7 @@ const App = () => {
         <Route path="/api/users/:id" element={<UserDetails />} />
         <Route path="/api/blogs/:id" element={<BlogDetails />} />
       </Routes>
-    </>
+    </div>
   );
 };
 
