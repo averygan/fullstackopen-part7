@@ -54,7 +54,7 @@ export const getAllBlogs = () => {
   };
 };
 
-export const handleDeleteBlog = (blogObject, loggedInUser) => {
+export const handleDeleteBlog = (blogObject, loggedInUser, navigate) => {
   return async (dispatch) => {
     if (!loggedInUser) {
       return alert("Login required to delete blogs");
@@ -69,6 +69,7 @@ export const handleDeleteBlog = (blogObject, loggedInUser) => {
             showNotification(`"${blogObject.title}" deleted successfully`)
           );
           dispatch(updateByUserId(blogObject.user.id));
+          navigate("/api/blogs");
         } else {
           dispatch(showError(`failed to delete "${blogObject.title}"`));
         }

@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Container, Row, Col, ListGroup } from "react-bootstrap";
 
 const UserDetails = () => {
   const users = useSelector((state) => state.users);
@@ -8,15 +9,19 @@ const UserDetails = () => {
 
   if (!user) return null;
   return (
-    <div>
-      <h1>{user.name}</h1>
-      <h2>added blogs</h2>
-      <ul>
-        {user.blogs.map((blog) => (
-          <li key={blog.id}>{blog.title}</li>
-        ))}
-      </ul>
-    </div>
+    <Container className="my-3">
+      <Row>
+        <Col md={8} lg={6} className="mx-auto">
+          <h1>{user.name}</h1>
+          <h2>added blogs</h2>
+          <ListGroup>
+            {user.blogs.map((blog) => (
+              <ListGroup.Item key={blog.id}>{blog.title}</ListGroup.Item>
+            ))}
+          </ListGroup>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

@@ -17,3 +17,7 @@
   padding: 10px;
   margin-bottom: 10px;
 }
+
+.blog-title {
+  font-size: 2rem; /* Adjust the font size as needed */
+}

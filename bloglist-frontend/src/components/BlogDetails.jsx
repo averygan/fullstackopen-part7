@@ -4,9 +4,14 @@ import { handleDeleteBlog, likeBlog } from "../reducers/blogReducer";
 import { showNotification } from "../reducers/notificationReducer";
 import blogService from "../services/blogs";
 import CommentForm from "./CommentForm";
+import { useNavigate } from "react-router-dom";
+
+import Card from "react-bootstrap/Card";
+import Button from "react-bootstrap/Button";
 
 const BlogDetails = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { id } = useParams();
   const blogs = useSelector((state) => state.blog);
@@ -32,37 +37,52 @@ const BlogDetails = () => {
   };
 
   const onDeleteClick = () => {
-    dispatch(handleDeleteBlog(blog, userData.loggedInUser));
+    dispatch(handleDeleteBlog(blog, userData.loggedInUser, navigate));
   };
 
   if (!blog) return null;
   return (
-    <div>
-      <h1>
-        {blog.title} {blog.author}
-      </h1>
-      <div>URL: {blog.url}</div>
-      <div>
-        Likes: {blog.likes} <button onClick={() => addLike(blog)}>like</button>
-      </div>
-      <div>User: {blog.user.name}</div>
-      <div>
-        {blog.user.username === userData.loggedInUser?.username && (
-          <button onClick={() => onDeleteClick()}>delete</button>
-        )}
-      </div>
-      <h2>Comments</h2>
+    <div className="container mt-4">
+      <Card>
+        <Card.Body>
+          <Card.Title className="blog-title">
+            {blog.title} {blog.author}
+          </Card.Title>
+          <Card.Text className="mb-2 text-muted">{blog.url}</Card.Text>
+          <Card.Text>
+            Likes: {blog.likes}{" "}
+            <Button
+              variant="outline-primary"
+              size="sm"
+              onClick={() => addLike(blog)}
+            >
+              like
+            </Button>
+          </Card.Text>
+          <Card.Text>User: {blog.user.name} </Card.Text>
+
+          <div className="mt-4">
+            {blog.user.username === userData.loggedInUser?.username && (
+              <Button variant="outline-danger" onClick={() => onDeleteClick()}>
+                delete
+              </Button>
+            )}
+          </div>
+        </Card.Body>
+      </Card>
+
+      <h2 className="mt-3">Comments</h2>
       <CommentForm blogId={blog.id} />
       {blog.comments.length > 0 ? (
-        <>
-          <ul>
-            {blog.comments.map((comment, index) => (
-              <li key={index}>{comment}</li>
-            ))}
-          </ul>
-        </>
+        <ul className="list-group list-group-flush mt-3">
+          {blog.comments.map((comment, index) => (
+            <li className="list-group-item" key={index}>
+              {comment}
+            </li>
+          ))}
+        </ul>
       ) : (
-        <>No comments yet... add one?</>
+        <p className="mt-2">No comments yet... add one?</p>
       )}
     </div>
   );

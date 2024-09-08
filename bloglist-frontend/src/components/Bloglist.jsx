@@ -7,29 +7,25 @@ const Bloglist = () => {
   const blogs = useSelector((state) => state.blog);
   const location = useLocation();
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: "solid",
-    borderWidth: 1,
-    marginBottom: 5,
-  };
-
   return (
     <>
       <BlogForm loggedInUser={users.loggedInUser} />
-      {blogs.map((blog) => {
-        const linkTo =
-          location.pathname === "/" ? `/api/blogs/${blog.id}` : `${blog.id}`;
-        return (
-          <div key={blog.id} style={blogStyle} className="bloglist">
-            <Link to={linkTo}>
-              <span>{blog.title} </span>
-              <span>{blog.author}</span>
-            </Link>
-          </div>
-        );
-      })}
+      <ul className="list-group pt-3">
+        {blogs.map((blog) => {
+          const linkTo =
+            location.pathname === "/" ? `/api/blogs/${blog.id}` : `${blog.id}`;
+          return (
+            <div key={blog.id} className="bloglist">
+              <li className="list-group-item">
+                <Link to={linkTo}>
+                  <span>{blog.title} </span>
+                  <span>{blog.author}</span>
+                </Link>
+              </li>
+            </div>
+          );
+        })}
+      </ul>
     </>
   );
 };

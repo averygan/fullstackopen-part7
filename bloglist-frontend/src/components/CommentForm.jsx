@@ -5,6 +5,9 @@ import blogService from "../services/blogs";
 import { showNotification } from "../reducers/notificationReducer";
 import { showError } from "../reducers/errorReducer";
 
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+
 const CommentForm = ({ blogId }) => {
   const dispatch = useDispatch();
   const [newComment, setComment] = useState("");
@@ -37,10 +40,20 @@ const CommentForm = ({ blogId }) => {
 
   return (
     <>
-      <form onSubmit={addComment}>
-        <input type="text" value={newComment} onChange={handleCommentChange} />
-        <button type="submit">add comment</button>
-      </form>
+      <Form onSubmit={addComment}>
+        <Form.Group className="mb-3">
+          <Form.Control
+            as="textarea"
+            rows={2}
+            placeholder="Type your comment here..."
+            value={newComment}
+            onChange={handleCommentChange}
+          />
+        </Form.Group>
+        <Button variant="primary" type="submit">
+          add comment
+        </Button>
+      </Form>
     </>
   );
 };
